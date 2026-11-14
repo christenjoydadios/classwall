@@ -2,13 +2,13 @@
 session_start();
 include 'db.php';
 
-// Session: visit counter (lasts until the browser closes)
+
 if (!isset($_SESSION['visits'])) {
     $_SESSION['visits'] = 0;
 }
 $_SESSION['visits']++;
 
-// Save a message (POST)
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $author = trim($_POST['author']);
     $body = trim($_POST['body']);
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$author, $body]);
     }
 
-    // Cookie: remember the name only if the box is ticked
+  
     if (isset($_POST['remember'])) {
         setcookie('author', $author, time() + 60 * 60 * 24 * 30);
     } else {
@@ -29,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Search (GET) and show messages, newest first
 $search = $_GET['search'] ?? '';
 $stmt = $pdo->prepare(
     "SELECT * FROM messages WHERE body ILIKE ? ORDER BY created_at DESC, id DESC"
@@ -37,7 +36,6 @@ $stmt = $pdo->prepare(
 $stmt->execute(['%' . $search . '%']);
 $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Pre-fill the name from the cookie
 $savedName = $_COOKIE['author'] ?? '';
 ?>
 <!DOCTYPE html>
